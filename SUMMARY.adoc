@@ -1,0 +1,35 @@
+= Summary
+
+ * link:README.adoc[前言]
+ * link:start/README.adoc[新手上路]
+   ** link:start/setup.adoc[安裝設定]
+   ** link:start/hello-world.adoc[Hello, World!]
+   ** link:start/quick-start.adoc[Hamcrest 速成]
+ * link:custom-matchers/README.adoc[自訂 Matcher]
+ * link:install-groovy.adoc[附錄：安裝 Groovy]
+ * link:install-sdkman.adoc[附錄：安裝 SDKMAN!]
+
+////
+TBD:
+
+ * 使用 JUnit 4 時，用 `org.junit.Assert#assertThat` 還是 `org.hamcrest.MatcherAssert#assertThat` 好? => 覺得用 JUnit 4 的版本會比較好，因為還可能呼叫 `fail()` 等 ... 雖然 JUnit 4 內部也是呼叫 `MatcherAssert#assertThat` https://github.com/junit-team/junit4/blob/master/src/main/java/org/junit/Assert.java#L961 => http://stackoverflow.com/questions/27256429 建議用 Hamcrest 的版本 => http://stackoverflow.com/questions/1092996/mixing-hamcrest-and-testng TestNG 並沒有提供 assertThat，但也可以用，因為都是丟出 `AssertionError`。
+ * Hamcrest 是 assertion 演化過程中第 3 代的產物 (hamcrest/hamcrest)，也被用在 mocking framework 的 argument matching
+ * JUnit 4 怎麼搭配 Hamcrest 用? 早期 JUnit 3.8 有 `assertThat`，但 JUnit 4 之後好像沒了? => 搞混了，是 Mockito 2.0 刻意切斷了與 Hamcrest 的關係，JUnit 4 還是鼓勵使用的。
+
+Questions:
+
+ * 為什麼 `org.hamcrest.Matchers` 裡有 `both`、`either` 等，但為什麼 `and` 跟 `or` 只在 http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/core/CombinableMatcher.html 裡找得到?? 實務上不常用嗎? 應該先用 `allOf` 跟 `anyOf`
+ * 幾乎都只講 `assertThat(actual, matcher)`，但 `assertThat(reason, actual, matcher)` 則很少被提到?? => https://code.google.com/archive/p/hamcrest/wikis/Tutorial.wiki 有說一個 test 有多個 assert 時可以用?
+ * 自訂 matcher 時的設計/命名慣例?? => 參考 `org.hamcrest.Matchers` 的設計，習慣上會用一個 `Matchers` 安排 static helper methods，讓它在 matcher expression 裡看起來好閱讀；參考 https://github.com/hamcrest/JavaHamcrest/tree/master/hamcrest-library/src/main/java/org/hamcrest 裡 `Matchers` 的設計，matcher 其實來自不同 package，每個 matcher 也會自己提供一個 static method，但還是會用一個 class 將它們統整起來。例如 `equalTo()` 的實作其實是 `return org.hamcrest.core.IsEqual.equalTo(operand)`，而 `IsEqual.equalTo()` 內部的實作則是 `return new IsEqual<>(operand)`
+ * 要怎麼說明 Hamcrest 比傳統的 `assert*()` 好 (可讀) ?? => https://objectpartners.com/2013/09/18/the-benefits-of-using-assertthat-over-other-assert-methods-in-unit-tests/ 除了可讀，還有其他好處...
+ * `org.hamcrest.Matchers` 底下好多東西，要分類一下?? 可能的話也要看過所有的 matcher 有個印象，這是學習 Hamcrest 比較花時間的部份 http://openhome.cc/Gossip/JUnit/Hamcrest.htm https://objectpartners.com/2013/09/18/the-benefits-of-using-assertthat-over-other-assert-methods-in-unit-tests/ 又 CoreMatchers 只是 Matchers 的子集?? http://www.shaunabram.com/hamcrest/
+ * 用 Groovy Shell 來學 Hamcrest 會不會很適合? 可以示範不同 match，不過 `AssertionError` 在 Groovy 下會被轉成 `org.codehaus.groovy.runtime.powerassert.PowerAssertionError`；用什麼做 assert 或 match?? => `Matcher#matches`
+ * Hamcrest 可以提高可讀性 https://code.google.com/archive/p/hamcrest/wikis/Tutorial.wiki 提到 "Hamcrest strives to make your tests as readable as possible. " 與 "By writing your own matcher you'll eliminate code duplication and make your tests more readable!" 有沒有比較好的例子??
+ * http://openhome.cc/Gossip/JUnit/Hamcrest.html 原來還有 `everyItem(lessThan(5))`，除了 `everyItem` 還有 `both` ... ??
+ * https://en.wikipedia.org/wiki/Hamcrest operations for iterating over collections 這指的應該是 `allOf()`、`anyOf()`、`等??
+ * 突然覺得 Hamcrest 跟 Cocoa 的 predicates 好像?? 也可以用在 data filtering
+   ** https://github.com/hamcrest/JavaHamcrest/issues/148 如果 Matcher 可以實作 java.util.function.Predicate ... 顯然兩者的概念是類似的；有人這麼做 https://github.com/valid4j/descriptive-predicates ... `verifyThat`、`require`、`ensure` 好多種用法 ... Guava 也有個 predicate: https://google.github.io/guava/releases/19.0/api/docs/com/google/common/base/Predicate.html
+ * Espresso 的 `onView()` 是不是一種 data filtering?? 而 `check()` 則是 assertion；有沒有 input validation 的例子? valid4j?
+
+////
+

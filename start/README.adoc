@@ -1,0 +1,28 @@
+= 新手上路
+
+Hamcrest (唸做 https://www.youtube.com/watch?v=YJyw75ndLc0&t=1m15s[[ham-crest&#93;]) 是一個宣告式 (declarative)、可以自訂 matcher 與 match rule 的框架，適用於**測試、資料篩選 (data filtering)、輸入驗證 (input validation) 等**。
+
+image::/images/logo.jpg[]
+
+(Hamcrest 的標誌)
+
+TIP: Hamcrest 其實是 matchers 的 https://en.wikipedia.org/wiki/Anagram[anagram] (易位構詞)，也就是將 matchers 裡的字母重新排列後的結果；其中 ham 是「火腿」，而 crest 是「鳥禽的冠毛」，這或許解釋了為什麼圖中會有一片片像火腿的東西，但為什麼有人在衝浪？
+
+[quote]
+____
+ * http://hamcrest.org/JavaHamcrest/[Java Hamcrest 官網]
+ * https://github.com/hamcrest/JavaHamcrest[hamcrest/JavaHamcrest - GitHub]
+____
+
+其中又以在測試中做斷言 (assertion) 的用法最為常見，這可以從 assertion 的演進說起...
+
+ * 第一代是 `assert x == y`，但發生錯誤時不知道 `x` 跟 `y` 分別是什麼。
+
+ * 第二代是 `assertEquals(x, y)`，能產生比較有用的 error message，但這會產生大量的 `assert*()`，例如 `assertNotEquals(x, y)`、`assertLessThan(x, y)` 等。
+
+ * 第三代則只有一個 `assertThat()` 再搭配一或多個 matcher，像是 `assertThat(x, equalTo(y))`、`assertThat(x, not(equalTo(y)))`。
++
+只要少量基本的 (primitive) matcher，搭配一些邏輯運算 (and、or、not) 就可以拼湊出多樣、複雜的 matcher expression。
+
+Hamcrest 屬於第三代的做法，最初是 Java 的實現，後來被移植 (port) 到 https://github.com/hamcrest/PyHamcrest[Python]、 https://github.com/hamcrest/OCHamcrest[Objective-C]、 https://github.com/nschum/SwiftHamcrest[Swift] 等其他程式語言。
+

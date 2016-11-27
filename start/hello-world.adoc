@@ -1,0 +1,136 @@
+= Hello, World!
+
+假設 `Greeting#hello` 的實作如下：
+
+[source,java]
+.`Greeting.java`
+----
+public class Greeting {
+    public static String hello(String who) {
+        return "Hello, " + who + "!";
+    }
+}
+----
+
+對應的測試會像是：(這裡使用 http://junit.org/junit4/[JUnit 4])
+
+[source,java]
+.`GreetingTest.java`
+----
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import org.junit.Test;
+
+public class GreetingTest {
+    @Test
+    public void helloWorld() {
+        // assertEquals("Hello, World!", Greeting.hello("World"));
+        assertThat(Greeting.hello("World"), equalTo("Hello, World!"));
+    }
+}
+----
+
+`assertThat` 來自 http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/MatcherAssert.html[`org.hamcrest.MatcherAssert`]，用法如下：
+
+----
+static <T> void assertThat(T actual, Matcher<? super T> matcher)
+----
+
+它會檢查 `actual` 是否符合 `matcher` (http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matcher.html[`org.hamcrest.Matcher`]) 所描述的條件，否則丟出 `AssertionError`。內部的實作大概會像是：
+
+----
+assert matcher.matches(actual)
+----
+
+當然，這只是打個比方。若故意將 `Greeting.hello("World")` 寫成 `Greeting.hello("Word")` (中間少了一個 `l`)，會丟出下面的錯誤：
+
+----
+java.lang.AssertionError:
+Expected: "Hello, World!"
+     but: was "Hello, Word!"
+----
+
+http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matchers.html[`org.hamcrest.Matchers`] 提供了很多 static helper method，方便建立不同的 matcher object，也讓 assertion 更具描述性 (descriptive) 跟可讀性 (readable)。例如：
+
+----
+allOf(startsWith("Hello"), endsWith("World!"))
+----
+
+這裡的 `allOf`、`startsWith`、`endsWith` 及上面的 `equalTo` 都由 `Matchers` 提供。以 `equalTo("Hello, World!")` 為例，等同於 `new org.hamcrest.core.IsEqual("Hello, World!")`，你絕不會想要 assertion 像這個樣子：
+
+----
+assertThat(Greeting.hello("World"), new org.hamcrest.core.IsEqual("Hello, World!"));
+----
+
+之後link:../custom-matchers/README.adoc[自訂 matcher] 時，也應該做相同的考量，**讓 matcher 用起來方便、不會破壞 assertion 的可讀性**。
+
+== 跟測試框架的關係
+
+Hamcrest 在設計上並無綁定任何測試框架 (testing framework)，可以搭配 JUnit 3、JUnit 4 及 http://testng.org/[TestNG] 等使用，甚至可以與其他 assertion 方式混用 (不建議)，因為 `assertThat` 也是丟出 `AssertionError`。
+
+[quote,'https://code.google.com/archive/p/hamcrest/wikis/Tutorial.wiki[The Hamcrest Tutorial]']
+____
+Hamcrest has been designed from the outset to integrate with different unit testing frameworks. For example, Hamcrest can be used with JUnit 3 and 4 and TestNG. (For details have a look at the examples that come with the full Hamcrest distribution.) It is easy enough to migrate to using Hamcrest-style assertions in an existing test suite, since other assertion styles can co-exist with Hamcrest's.
+____
+
+如果使用 JUnit 4，會發現 `org.junit.Assert` 也提供了 `assertThat` 方法，而且 method signature 跟 Hamcrest 的版本一樣，該用哪一個比較好？
+
+[TIP]
+====
+https://github.com/junit-team/junit4/releases/tag/r4.10[JUnit 4.10] (2011-09-30) 整合 Hamcrest 1.1，那時 `org.junit.Assert#assertThat` 的用法是：
+
+----
+static <T> void assertThat(T actual, Matcher<T> matcher)
+----
+
+到了 https://github.com/junit-team/junit4/releases/tag/r4.11[JUnit 4.11] (2012-11-15) 則整合 Hamcrest 1.3，`org.junit.Assert#assertThat` 的用法變成：
+
+----
+static <T> void assertThat(T actual, Matcher<? super T> matcher)
+----
+====
+
+[quote]
+____
+ * http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/MatcherAssert.html#assertThat(T,%20org.hamcrest.Matcher)[`org.hamcrest.MatcherAssert#assertThat`]
+ * http://junit.org/junit4/javadoc/latest/org/junit/Assert.html#assertThat(T,%20org.hamcrest.Matcher)[`org.junit.Assert#assertThat`]
+____
+
+事實上 JUnit 3 跟 TestNG 都沒有提供 `assertThat`，雖然 JUnit 4 開始提供 `assertThat`，但到了 JUnit 5 又被拿掉了，在官方文件裡是這麼說的：
+
+[quote,'http://junit.org/junit5/docs/snapshot/user-guide/#writing-tests-assertions-third-party[Third-party Assertion Libraries - JUnit 5 User Guide]']
+____
+However, JUnit Jupiter’s `org.junit.jupiter.Assertions` class does not provide an `assertThat()` method like the one found in JUnit 4’s `org.junit.Assert` class which accepts a Hamcrest `Matcher`. Instead, **developers are encouraged to use the built-in support for matchers provided by third-party assertion libraries**.
+____
+
+因此，**為了在不同 testing framework 上有相同的體驗，建議不要使用 `org.junit.Assert#assertThat`，這樣做也可以選用新版的 Hamcrest，而不被 JUnit 整合的版本綁住**。
+
+== Groovy Shell
+
+在學習 Hamcrest 的過程中，**花時間大致瞭解過所有 matcher 的用法很重要，建議利用 http://groovy-lang.org/groovysh.html[Groovy Shell] (`groovysh`) 提供的互動式環境，試著用易讀 (readable) 的方式，把想要描述的條件用 matcher expression 寫出來**。
+
+這份筆記接下來也會用 Groovy Shell 做說明，例如：
+
+----
+$ groovysh -cp /path/to/hamcrest-library.jar
+...
+
+groovy:000> import static org.hamcrest.MatcherAssert.assertThat
+===> static org.hamcrest.MatcherAssert.assertThat
+groovy:000> import static org.hamcrest.Matchers.*
+===> static org.hamcrest.MatcherAssert.assertThat, static org.hamcrest.Matchers.*
+
+groovy:000> assertThat("Hello, World!", startsWith("Hello"))
+===> null
+groovy:000> assertThat("Hello, World!", endsWith("World"))
+ERROR java.lang.AssertionError:
+
+Expected: a string ending with "World"
+     but: was "Hello, World!"
+        at org.hamcrest.MatcherAssert.assertThat (MatcherAssert.java:20)
+        at org.hamcrest.MatcherAssert.assertThat (MatcherAssert.java:8)
+        at org.hamcrest.MatcherAssert$assertThat.callStatic (Unknown Source)
+----
+
+安裝 Groovy (Shell) 可以參考link:../install-groovy.adoc[附錄]。
+

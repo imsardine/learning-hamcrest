@@ -1,0 +1,27 @@
+= 安裝設定
+
+Hamcrest 提供有多個用途不同的 `.jar`：
+
+ * `hamcrest-core.jar` - 內含基本的 matcher，及開發其他 matcher 會用到的 API。
+ * `hamcrest-library.jar` - 在 `hamcrest-core.jar` 的基礎之上，提供額外的 matcher。
+ * ... (其餘參考 https://code.google.com/archive/p/hamcrest/wikis/HamcrestDistributables.wiki[這裡])
+
+除非只是要整合 Hamcrest API，否則大部份時候都是採用 `hamcrest-library.jar`；這些 `.jar` 都有對應的 Maven artifact (`org.hamcrest:*`)，在 Maven 或 Gradle 下可以這樣宣告相依性：
+
+.Maven
+----
+<dependency>
+    <groupId>org.hamcrest</groupId>
+    <artifactId>hamcrest-library</artifactId>
+    <version>1.3</version>
+    <scope>test</scope>
+</dependency>
+----
+
+.Gradle
+----
+testCompile 'org.hamcrest:hamcrest-library:1.3'
+----
+
+其他 build tool 的宣告方式可以參考 http://search.maven.org/#search|ga|1|g%3Aorg.hamcrest[這裡] (Central Repository)，也有 `.jar` 可以直接下載。
+

@@ -1,0 +1,103 @@
+= 安裝 SDKMAN!
+
+SDKMAN! 是在 Unix-like 系統上管理 Java 不同 SDK 的工具 (SDK Manager)，前身是 GVM (Groovy enVironment Manager)，目前發展為可以管理 Groovy、Scala、Grails、Play 等。這些 SDKMAN! 可以管理的工具都稱做 _candidate_。
+
+執行下面的指令即可安裝 SDKMAN!：
+
+----
+$ curl -s get.sdkman.io | bash
+----
+
+其間會初始化 SDKMAN!，並自動更新 Bash (跟 Zsh) 相關的設定檔，在新的 terminal 裡 SDKMAN! 才會開始作用。例如：
+
+----
+$ curl -s get.sdkman.io | bash
+
+Thanks for using...
+
+
+     SSSSSSSSSSSSSSS DDDDDDDDDDDDD       KKKKKKKKK    KKKKKKK
+   SS:::::::::::::::SD::::::::::::DDD    K:::::::K    K:::::K
+  S:::::SSSSSS::::::SD:::::::::::::::DD  K:::::::K    K:::::K
+  S:::::S     SSSSSSSDDD:::::DDDDD:::::D K:::::::K   K::::::K
+  S:::::S              D:::::D    D:::::DKK::::::K  K:::::KKK
+  S:::::S              D:::::D     D:::::D K:::::K K:::::K
+   S::::SSSS           D:::::D     D:::::D K::::::K:::::K
+    SS::::::SSSSS      D:::::D     D:::::D K:::::::::::K
+      SSS::::::::SS    D:::::D     D:::::D K:::::::::::K
+         SSSSSS::::S   D:::::D     D:::::D K::::::K:::::K
+              S:::::S  D:::::D     D:::::D K:::::K K:::::K
+              S:::::S  D:::::D    D:::::DKK::::::K  K:::::KKK
+  SSSSSSS     S:::::SDDD:::::DDDDD:::::D K:::::::K   K::::::K
+  S::::::SSSSSS:::::SD:::::::::::::::DD  K:::::::K    K:::::K
+  S:::::::::::::::SS D::::::::::::DDD    K:::::::K    K:::::K
+   SSSSSSSSSSSSSSS   DDDDDDDDDDDDD       KKKKKKKKK    KKKKKKK
+
+
+                      mmmmmmm    mmmmmmm     aaaaaaaaaaaaa  nnnn  nnnnnnnn
+                    mm:::::::m  m:::::::mm   a::::::::::::a n:::nn::::::::nn
+                   m::::::::::mm::::::::::m  aaaaaaaaa:::::an::::::::::::::nn
+                   m::::::::::::::::::::::m           a::::ann:::::::::::::::n
+                   m:::::mmm::::::mmm:::::m    aaaaaaa:::::a  n:::::nnnn:::::n
+                   m::::m   m::::m   m::::m  aa::::::::::::a  n::::n    n::::n
+                   m::::m   m::::m   m::::m a::::aaaa::::::a  n::::n    n::::n
+                   m::::m   m::::m   m::::ma::::a    a:::::a  n::::n    n::::n
+                   m::::m   m::::m   m::::ma::::a    a:::::a  n::::n    n::::n
+                   m::::m   m::::m   m::::ma:::::aaaa::::::a  n::::n    n::::n
+                   m::::m   m::::m   m::::m a::::::::::aa:::a n::::n    n::::n
+                   mmmmmm   mmmmmm   mmmmmm  aaaaaaaaaa  aaaa nnnnnn    nnnnnn
+
+
+                                                 Now attempting installation...
+
+Looking for a previous installation of SDKMAN...
+Looking for unzip...
+Looking for curl...
+Looking for sed...
+Installing SDKMAN scripts... <1>
+Create distribution directories...
+Getting available candidates...
+Prime the config file...
+Download script archive...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:02 --:--:--     0
+100 19536  100 19536    0     0   4268      0  0:00:04  0:00:04 --:--:-- 10276
+Extract script archive...
+Install scripts...
+Set version to 5.1.5+82 ...
+Attempt update of bash profiles...
+Updated existing /Users/jeremykao/.bash_profile <1>
+Created and initialised /Users/jeremykao/.bashrc
+Attempt update of zsh profiles...
+
+
+
+All done!
+
+
+Please open a new terminal, or run the following in the existing one:
+
+    source "/Users/jeremykao/.sdkman/bin/sdkman-init.sh" <2>
+
+Then issue the following command:
+
+    sdk help
+
+Enjoy!!!
+----
+<1> 將 SDKMAN! 安裝在 `~/.sdkman/`。
+<2> 更新 `~/.bash_profile`、`~/bashrc` 與 `~/.zshrc`。
+<3> 在新的 terminal 裡 SDKMAN! 才會開始作用，否則要在現有的 terminal 裡執行 `source ~/.sdkman/bin/sdkman-init.sh`。
+
+上述更新 Bash (跟 Zsh) 相關設定檔的步驟，其實就是在檔案後面加上下面這幾行：
+
+----
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/Users/jeremykao/.sdkman"
+[[ -s "/Users/jeremykao/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/jeremykao/.sdkman/bin/sdkman-init.sh"
+----
+
+也就是為新開啟的 terminal 設定 `SDKMAN_DIR` 環境變數 (指向 `SDKMAN!` 的安裝目錄)，並完成 SDKMAN! 的初始化。
+
