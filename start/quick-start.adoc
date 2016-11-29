@@ -1,2 +1,98 @@
 = Hamcrest 速成
 
+`org.hamcrest.Matchers` (或 `org.hamcrest.CoreMatchers`) 提供了許多 static factory method，以建立不同的 matcher object。**在學習 Hamcrest 的一開始，花時間大致瞭解過所有 matcher 的用法很重要，日後需要用到時才有個方向**；這裡將依不同分類，逐一說明不同 matcher 的用法。
+
+TIP: 下面會有多處使用 "examined object" (檢查的對象) 的說法，其實就是 `assertThat(actual, matcher)` 中的 `actual`。
+
+== `Object` 相關
+
+=== `equalTo`
+
+----
+static <T> Matcher<T> equalTo(T operand)
+----
+
+檢查 examined object 與 `operand` 在_邏輯上_是等同的 (logically equal)，背後其實是呼叫 examined object 的 `equals(operand)`。例如：
+
+[source,java]
+----
+assertThat("string", equalTo("str".concat("ing")));
+assertThat("string1", equalTo("string2")); // unmatched
+----
+
+如果 examined object 是 `null`，除非 `operand` 也是 `null`，否則結果都是不符合。但如果 examined object 不是 `null`，結果則要看 examined object 的 `equals(Object)` 怎麼實作。例如：
+
+[source,java]
+----
+assertThat(null, equalTo(null));
+assertThat(null, equalTo("string")); // unmatched
+assertThat("string", equalTo(null)); // unmatched
+----
+
+`equalTo` 也可以用在陣列 (array)，會檢查 examined object 與 `operand` 的長度一樣，而且每個相同 index 的 element 都等同 (根據上面的規則)。例如：
+
+[source,java]
+----
+assertThat(new String[] {"str1", "str2"}, equalTo(new String[] {"str1", "str2"}));
+assertThat(new String[] {"str1", "str2", "str3"},
+           equalTo(new String[] {"str1", "str2"})); // unmatched
+----
+
+用在多維度陣列 (multidimensional array) 也沒問題：
+
+[source,java]
+----
+assertThat(new int[] { {1, 2}, {3, 4} }, equalTo(new int[] { {1, 2}, {3, 4} }));
+assertThat(new int[] { {1, 2}, {3, 4} },
+           equalTo(new int[] { {1, 2}, {3, 4, 5} })); // unmatched
+----
+
+=== `is`
+
+----
+static <T> Matcher<T> is(Matcher<T> matcher)
+static <T> Matcher<T> is(T value)
+----
+
+`is(Matcher<T> matcher)` 沒有實質的作用，目的是增加可讀性。例如：
+
+----
+assertThat(length, equalTo(width));
+assertThat(length, is(equalTo(width))); // 可讀性較高
+----
+
+TIP: 這說明了為什麼 `equalTo` 的 `equal` 後面沒有加 `s` (像 `assertEquals`)，因為這裡的 `equal` 是形容詞而非動詞，搭配 `is` 讀起來會更順。
+
+所謂的可讀性，就是讓 assertion 唸起來像一個通順的英文句子：
+
+----
+assert that length equal to width.
+assert that length is equal to width.
+----
+
+顯然加上 is 會比較通順。不過這也意謂著，`is` 並不適用於所有的 matcher，例如 `startsWith` 就不適合：
+
+----
+assertThat(text, startsWith(prefix));
+assertThat(text, is(startsWith(prefix))); // 文法有問題
+----
+
+回到 `is` 的另一個用法 `is(T value)`。就像英文 "is equal to ..." 通常可以寫成 "is ..." 一樣，`is(T value)` 其實是個 shortcut，等同於 `is(equalTo(value))`。例如：
+
+----
+assertThat(label, equalTo("Click Me!"));
+assertThat(label, is(equalTo("Click Me!")));
+assertThat(label, is("Click Me!")); // 最直覺
+----
+
+上面 3 種寫法是等效的，但第 3 種寫法最為直覺。
+
+=== `nullValue` / `notNullValue`
+
+----
+static Matcher<Object> nullValue()
+static <T> Matcher<T> nullValue(Class<T> type)
+static Matcher<Object> notNullValue()
+static <T> Matcher<T> notNullValue(Class<T> type)
+----
+

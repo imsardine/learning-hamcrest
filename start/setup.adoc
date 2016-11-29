@@ -6,7 +6,7 @@ Hamcrest 提供有多個用途不同的 `.jar`：
  * `hamcrest-library.jar` - 在 `hamcrest-core.jar` 的基礎之上，提供額外的 matcher。
  * ... (其餘參考 https://code.google.com/archive/p/hamcrest/wikis/HamcrestDistributables.wiki[這裡])
 
-除非只是要整合 Hamcrest API，否則大部份時候都是採用 `hamcrest-library.jar`；這些 `.jar` 都有對應的 Maven artifact (`org.hamcrest:*`)，在 Maven 或 Gradle 下可以這樣宣告相依性：
+除非只是要整合 Hamcrest API，否則大部份時候都是採用 `hamcrest-library.jar`；這些 `.jar` 都有對應的 Maven artifact (`org.hamcrest:*`)，在 https://maven.apache.org/[Maven] 或 https://gradle.org/[Gradle] 下可以這樣宣告相依性：
 
 .Maven
 ----

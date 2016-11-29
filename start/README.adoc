@@ -12,6 +12,7 @@ TIP: Hamcrest 其實是 matchers 的 https://en.wikipedia.org/wiki/Anagram[anagr
 ____
  * http://hamcrest.org/JavaHamcrest/[Java Hamcrest 官網]
  * https://github.com/hamcrest/JavaHamcrest[hamcrest/JavaHamcrest - GitHub]
+ * http://stackoverflow.com/questions/tagged/hamcrest['hamcrest' Questions - Stack Overflow]
 ____
 
 其中又以在測試中做斷言 (assertion) 的用法最為常見，這可以從 assertion 的演進說起...

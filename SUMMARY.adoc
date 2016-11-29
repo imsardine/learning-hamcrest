@@ -18,8 +18,23 @@ TBD:
 
 Questions:
 
+ * 覺得像 `allOf`、`anyOf` 等，應該要有個像 `is` 一樣的 decorator (例如 `matches`)，唸起來比較順?? 但其實沒有加也看得懂，加了會有更多括號...
+ * 雖然用 `equalTo(null)` 也可以?? 但 `nullValue` 或 `notNullValue` 的可讀性較高。`notNullValue()` 等同於 `not(nullValue())` 嗎??
+ * 有 boolean 專用的 matcher 嗎?? => 好像只能用 `equalTo(true)` 或 `equalTo(false)`
+ * Espresso 的 matcher 是針對 view 的某個 attribute，有沒有機會重複應用 Hamecrest 原生的 matcher?? => 有的，像 `withText(text)` 之外，還有個 `withText(matcher)` ... 不知道裡面是怎麼辦到的?? 而這似乎也是設計 view matcher 的慣例? 一定要額外提供一個接受 matcher 的版本
+ * 一個 test 只應有一個 assert，這問題在採用 Hamcrest 後，一個 match expression 裡可能有多個 matcher，有違返這個原則嗎??
+ * 幾乎都只講 `assertThat(actual, matcher)`，但 `assertThat(reason, actual, matcher)` 則很少被提到?? => https://code.google.com/archive/p/hamcrest/wikis/Tutorial.wiki 有說一個 test 有多個 assert 時可以用? 錯誤時才知道錯在哪個 assertion? 這跟 description 是什麼關係?
+   ** 試過 `assertThat("leading", actual, startsWith("World"));`，結果發生錯誤時並不會繼續往下執行 
++
+----
+java.lang.AssertionError: leading
+Expected: a string starting with "World"
+     but: was "Hello, World!"
+----
++
+ * https://code.google.com/archive/p/hamcrest/wikis/Tutorial.wiki 有這麼一段話 "Having a tool that allows you to pick out precisely the aspect under test and describe ..." 為什麼用 Hamcrest 就有這個效果?? 因為像 JUnit 的 `assert*` 不多嗎? "controlled level of precision"
+ * 雖然說 Hamcrest 更為 descriptive/readable，但關於 exception 的驗證好像沒說過什麼??
  * 為什麼 `org.hamcrest.Matchers` 裡有 `both`、`either` 等，但為什麼 `and` 跟 `or` 只在 http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/core/CombinableMatcher.html 裡找得到?? 實務上不常用嗎? 應該先用 `allOf` 跟 `anyOf`
- * 幾乎都只講 `assertThat(actual, matcher)`，但 `assertThat(reason, actual, matcher)` 則很少被提到?? => https://code.google.com/archive/p/hamcrest/wikis/Tutorial.wiki 有說一個 test 有多個 assert 時可以用?
  * 自訂 matcher 時的設計/命名慣例?? => 參考 `org.hamcrest.Matchers` 的設計，習慣上會用一個 `Matchers` 安排 static helper methods，讓它在 matcher expression 裡看起來好閱讀；參考 https://github.com/hamcrest/JavaHamcrest/tree/master/hamcrest-library/src/main/java/org/hamcrest 裡 `Matchers` 的設計，matcher 其實來自不同 package，每個 matcher 也會自己提供一個 static method，但還是會用一個 class 將它們統整起來。例如 `equalTo()` 的實作其實是 `return org.hamcrest.core.IsEqual.equalTo(operand)`，而 `IsEqual.equalTo()` 內部的實作則是 `return new IsEqual<>(operand)`
  * 要怎麼說明 Hamcrest 比傳統的 `assert*()` 好 (可讀) ?? => https://objectpartners.com/2013/09/18/the-benefits-of-using-assertthat-over-other-assert-methods-in-unit-tests/ 除了可讀，還有其他好處...
  * `org.hamcrest.Matchers` 底下好多東西，要分類一下?? 可能的話也要看過所有的 matcher 有個印象，這是學習 Hamcrest 比較花時間的部份 http://openhome.cc/Gossip/JUnit/Hamcrest.htm https://objectpartners.com/2013/09/18/the-benefits-of-using-assertthat-over-other-assert-methods-in-unit-tests/ 又 CoreMatchers 只是 Matchers 的子集?? http://www.shaunabram.com/hamcrest/

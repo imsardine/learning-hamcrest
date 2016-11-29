@@ -36,7 +36,7 @@ public class GreetingTest {
 static <T> void assertThat(T actual, Matcher<? super T> matcher)
 ----
 
-它會檢查 `actual` 是否符合 `matcher` (http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matcher.html[`org.hamcrest.Matcher`]) 所描述的條件，否則丟出 `AssertionError`。內部的實作大概會像是：
+它會檢查 `actual` (檢查的對象 examined object) 是否符合 `matcher` (http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matcher.html[`org.hamcrest.Matcher`]) 所描述的條件，否則丟出 `AssertionError`。內部的實作大概會像是：
 
 ----
 assert matcher.matches(actual)
@@ -45,16 +45,19 @@ assert matcher.matches(actual)
 當然，這只是打個比方。若故意將 `Greeting.hello("World")` 寫成 `Greeting.hello("Word")` (中間少了一個 `l`)，會丟出下面的錯誤：
 
 ----
+helloWorld(io.github.imsardine.hamcrest.GreetingTest)  Time elapsed: 0.012 sec  <<< FAILURE!
 java.lang.AssertionError:
 Expected: "Hello, World!"
      but: was "Hello, Word!"
 ----
 
-http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matchers.html[`org.hamcrest.Matchers`] 提供了很多 static helper method，方便建立不同的 matcher object，也讓 assertion 更具描述性 (descriptive) 跟可讀性 (readable)。例如：
+http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matchers.html[`org.hamcrest.Matchers`] 提供了很多 static factory method，方便建立不同的 matcher object，也讓 assertion 更具描述性 (descriptive) 跟可讀性 (readable)。例如：
 
 ----
 allOf(startsWith("Hello"), endsWith("World!"))
 ----
+
+TIP: `org.hamcrest.Matchers` 屬於 `hamcrest-library` 的一部份，若是使用 `hamcrest-core`，則要改用 http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/CoreMatchers.html[`CoreMatchers`]；基本上，可以把 `CoreMatchers` 視為 `Matchers` 的子集。
 
 這裡的 `allOf`、`startsWith`、`endsWith` 及上面的 `equalTo` 都由 `Matchers` 提供。以 `equalTo("Hello, World!")` 為例，等同於 `new org.hamcrest.core.IsEqual("Hello, World!")`，你絕不會想要 assertion 像這個樣子：
 
@@ -107,21 +110,19 @@ ____
 
 == Groovy Shell
 
-在學習 Hamcrest 的過程中，**花時間大致瞭解過所有 matcher 的用法很重要，建議利用 http://groovy-lang.org/groovysh.html[Groovy Shell] (`groovysh`) 提供的互動式環境，試著用易讀 (readable) 的方式，把想要描述的條件用 matcher expression 寫出來**。
-
-這份筆記接下來也會用 Groovy Shell 做說明，例如：
+在學習 Hamcrest 的過程中，**花時間大致瞭解過所有 matcher 的用法很重要，建議利用 http://groovy-lang.org/groovysh.html[Groovy Shell] (`groovysh`) 提供的互動式環境，練習用易讀的方式，把想要描述的條件用 matcher expression 寫出來**。例如：
 
 ----
 $ groovysh -cp /path/to/hamcrest-library.jar
 ...
 
-groovy:000> import static org.hamcrest.MatcherAssert.assertThat
+groovy:000> import static org.hamcrest.MatcherAssert.assertThat <1>
 ===> static org.hamcrest.MatcherAssert.assertThat
 groovy:000> import static org.hamcrest.Matchers.*
 ===> static org.hamcrest.MatcherAssert.assertThat, static org.hamcrest.Matchers.*
 
 groovy:000> assertThat("Hello, World!", startsWith("Hello"))
-===> null
+===> null <2>
 groovy:000> assertThat("Hello, World!", endsWith("World"))
 ERROR java.lang.AssertionError:
 
@@ -131,6 +132,8 @@ Expected: a string ending with "World"
         at org.hamcrest.MatcherAssert.assertThat (MatcherAssert.java:8)
         at org.hamcrest.MatcherAssert$assertThat.callStatic (Unknown Source)
 ----
+<1> 首先引入 `org.hamcrest.MatcherAssert.assertThat` 與 `org.hamcrest.Matchers.*`。
+<2> 沒有丟出例外，表示條件成立。
 
 安裝 Groovy (Shell) 可以參考link:../install-groovy.adoc[附錄]。
 

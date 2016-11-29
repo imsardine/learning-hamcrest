@@ -1,2 +1,14 @@
 = 自訂 Matcher
 
+////
+ * 可以拿現成不同類型的 matcher 來練習，例如 `is` (wrapper)、`everyItem`、`anyOf`、`allOf` 等
+ * 當你發現有幾段驗證結果的程式碼重複時，若沒有現成的 matcher 可用，就可以考慮寫自己的 matcher -  when you find a fragment of code that tests the same set of properties over and over again (and in different tests)；寫自己 matcher 的目的是排除 code duplication 而且讓 test code 更容易讀。
+ * `org.hamcrest.Matchers` 裡的 static method "通常" 就是 matcher class 的名稱 (或變化形)，而且 matcher class 通常也會自己提供 static factory method (可能有多個)。
+ * 例如 `org.hamcrest.Matchers.containsString()` 其實是來自 `org.hamcrest.core.StringContains` 裡的 `containsString()`。Class 跟 factory method 兩者命名上的差異，主要是考量 factory method 放在 test code 裡的可讀性，可以肯定的是 class name 後面不會刻意加上 `Matcher` (除非是 base class，例如 `TypeSafeMatcher`、`SubstringMatcher` 等)。
+ * 繼承 `TypeSafeMatcher` 後，除覆寫 `matchesSafely(item)` 之外，也要實作來自 `org.hamcrest.SelfDescription` 的 `describeTo(description)`。
+ * 在 `matchesSafely(item)` 被呼叫前，matcher 已經做過 non-null value、expected type 的檢查，並強制做 type casting。
+ * Description 用來產生 failure message (習慣用小寫開頭)。例如 `java.lang.AssertionError: Expected: not a number ...`
+ * Static factory method 的存在是為了在 test code 裡用起來有可讀性；雖然這裡總是傳回新的 instance，但只要確保 matcher 是 stateless，重複使用一個 instance 是可以的。
+ * `@Factory` 是給 generator (`org.hamcrest.generator.config.XmlConfigurator`) 用的，它會把不同 matcher class 裡的 factory method (標示有 `@Factory`) 集中到一個 `XXMatchers` class 裡，方便一次引入。例如 `org.hamcrest.Matchers` 其實是用 [`core-matchers.xml`](https://github.com/hamcrest/JavaHamcrest/blob/hamcrest-java-1.3/core-matchers.xml) 自動產生的，所以找不到原始碼。
+ * 有些還是 sugar，像 `is(value)` 等同於 `is(equalTo(value))`
+////
